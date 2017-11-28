@@ -163,6 +163,7 @@ int main(void)
 
       continue;
     }
+    if(buf[0]=='c' && buf[1]=='d' && buf[2]=='\n')continue;
     if(fork1() == 0)
       runcmd(parsecmd(buf));
     wait();
@@ -328,7 +329,7 @@ struct cmd *nulterminate(struct cmd*);
 struct cmd*
 parsecmd(char *s)
 {
-  char *new_path=malloc(strlen(s)+5);
+  char *new_path=malloc(strlen(s));
   struct cmd *cmd;
   char *es;
   new_path[0]='/';
