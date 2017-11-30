@@ -29,7 +29,7 @@ void copy_file(char* dst,char *src){
     }
     close(fdr);
     close(fdw);
-    printf(2,"copy %s to %s success\n",src,dst);
+    //printf(2,"copy %s to %s success\n",src,dst);
 }
 //asd
 void _strcat(char *dst,char *src){
@@ -174,7 +174,7 @@ int main(int argc, char **argv){
         }
     }
     if(!strcmp(source_path,"*")){
-        printf(1,"enter 1\n");
+        //printf(1,"enter 1\n");
         strcpy(parent_dir,"/");
         traverse_dir(".");
     }
