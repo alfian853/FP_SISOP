@@ -1,4 +1,8 @@
-#include <stdio.h>
+#include "types.h"
+#include "stat.h"
+#include "user.h"
+#include "fcntl.h"
+#include "fs.h"
 
 unsigned char charset[]={"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"};
 
@@ -17,7 +21,7 @@ unsigned char revchar(char ch)
    return(ch);
 }
 
-int base64_encode(unsigned char in[], unsigned char out[], int len, int newline_flag)
+int base64_encode(unsigned char in[], unsigned char out[], int len, int newline_flag, int separator)
 {
    int idx,idx2,blks,left_over;
 
@@ -28,7 +32,7 @@ int base64_encode(unsigned char in[], unsigned char out[], int len, int newline_
       out[idx2+2] = charset[((in[idx+1] & 0x0f) << 2) + (in[idx+2] >> 6)];
       out[idx2+3] = charset[in[idx+2] & 0x3F];
       
-      if (!(idx2 % 77) && newline_flag) {
+      if (!(idx2 % separator) && newline_flag) {
          out[idx2+4] = '\n';
          idx2++;
       }
@@ -86,10 +90,42 @@ int base64_decode(unsigned char in[], unsigned char out[], int len)
 }
 
 int main(int argc, char *argv[]){
-
+   char *data[] *output[];
+   int jum=0;
    if (argc == 1){
       printf(1, "No input data")
    }
-   else if(argc == 2)
+   else if(argc == 2){
+      int inputfile;
+      inputfile = open(argv[1], O_RDONLY);
+      while( ( buff_len=read(inputfile,buffer,sizeof(buffer)) )> 0  ){
+         data[jum] = buffer;
+         jum=jum+1;
+      }
+      base64_encode(data, output, jum, 0, 77);
+   }
+   else if(argc == 3){
+      if (argv[2] == 'D' ){
+         int inputfile;
+         inputfile = open(argv[1], O_RDONLY);
+         while( ( buff_len=read(inputfile,buffer,sizeof(buffer)) )> 0  ){
+            data[jum] = buffer;
+            jum=jum+1;
+         }
+         base64_encode(data, output, jum, 0, 77);
+      }
+      else if (argv[2] == 'E' ){
+         int inputfile;
+         inputfile = open(argv[1], O_RDONLY);
+         while( ( buff_len=read(inputfile,buffer,sizeof(buffer)) )> 0  ){
+            data[jum] = buffer;
+            jum=jum+1;
+         }
+         base64_dencode(data, output, jum);
+      }
+      else (arg)
+
+
+   }
    return 0
 }
