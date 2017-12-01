@@ -4,6 +4,8 @@
 #include "fcntl.h"
 #include "fs.h"
 
+//function from http://bradconte.com/base64_c
+
 unsigned char charset[]={"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"};
 
 unsigned char revchar(char ch)
@@ -90,13 +92,21 @@ int base64_decode(unsigned char in[], unsigned char out[], int len)
 }
 
 int main(int argc, char *argv[]){
-   char *data[] *output[];
+   char data[], output[];
    int jum=0;
    if (argc == 1){
-      printf(1, "No input data")
+      printf(1, "USAGE:\n");
+      printf(1, "./base64 file -> for eecode data\n"); 
+      printf(1, "./base64 D file -> for decode data\n"); 
+      printf(1, "./base64 E file -> for encode data\n"); 
+      printf(1, "./base64 W n file -> for encode and add newline every n characters\n"); 
+      printf(1, "./base64 W n E file -> for encode and add newline every n characters\n");
+      printf(1, "./base64 W n D file -> for dencode and add newline every n characters\n");
+
    }
    else if(argc == 2){
       int inputfile;
+      char buffer[128];
       inputfile = open(argv[1], O_RDONLY);
       while( ( buff_len=read(inputfile,buffer,sizeof(buffer)) )> 0  ){
          data[jum] = buffer;
@@ -105,27 +115,62 @@ int main(int argc, char *argv[]){
       base64_encode(data, output, jum, 0, 77);
    }
    else if(argc == 3){
-      if (argv[2] == 'D' ){
+      if (argv[1] == 'D' ){
          int inputfile;
-         inputfile = open(argv[1], O_RDONLY);
+         char buffer[128];
+         inputfile = open(argv[2], O_RDONLY);
          while( ( buff_len=read(inputfile,buffer,sizeof(buffer)) )> 0  ){
             data[jum] = buffer;
             jum=jum+1;
          }
          base64_encode(data, output, jum, 0, 77);
       }
-      else if (argv[2] == 'E' ){
+      else if (argv[1] == 'E' ){
          int inputfile;
-         inputfile = open(argv[1], O_RDONLY);
+         char buffer[128];
+         inputfile = open(argv[2], O_RDONLY);
          while( ( buff_len=read(inputfile,buffer,sizeof(buffer)) )> 0  ){
             data[jum] = buffer;
             jum=jum+1;
          }
          base64_dencode(data, output, jum);
       }
-      else (arg)
-
-
    }
+   else if(argc == 4){
+      if (argv[1] == 'W' ){
+         int inputfile;
+         char buffer[128];
+         inputfile = open(argv[3], O_RDONLY);
+         while( ( buff_len=read(inputfile,buffer,sizeof(buffer)) )> 0  ){
+            data[jum] = buffer;
+            jum=jum+1;
+         }
+         base64_encode(data, output, jum, 0, argv[2]);
+      }
+   }
+   else if(argc == 5){
+       if (argv[3] == 'E' ){
+         int inputfile;
+         char buffer[128];
+         inputfile = open(argv[4], O_RDONLY);
+         while( ( buff_len=read(inputfile,buffer,sizeof(buffer)) )> 0  ){
+            data[jum] = buffer;
+            jum=jum+1;
+         }
+         base64_encode(data, output, jum, 0, argv[2]);
+      }
+      else if (argv[3] == 'D' ){
+         int inputfile;
+         char buffer[128];
+         inputfile = open(argv[4], O_RDONLY);
+         while( ( buff_len=read(inputfile,buffer,sizeof(buffer)) )> 0  ){
+            data[jum] = buffer;
+            jum=jum+1;
+         }
+         base64_dencode(data, output, jum);
+      }
+   }
+
+   close(inputfile);
    return 0
 }
