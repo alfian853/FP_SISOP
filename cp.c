@@ -11,15 +11,22 @@ char *source_path,*destination_path;
 int recursively=0;
 
 void copy_file(char* dst,char *src){
-
-    int fdr,fdw;
-
+    int fdr,fdw,fdc;
+//    printf(1,"gogo\n");
     if ( (fdr=open(src,O_RDONLY)) < 0 ){
-        printf(1,"can't read %s\n",src);
+        printf(1,"can't read from %s\n",src);
         return;
     }
-    if ( (fdw=open(dst,O_CREATE|O_RDWR)) < 0 ){
-        printf(1,"can't write %s\n",dst);
+    if ( (fdc=open(dst,O_CREATE)) < 0 ){
+        printf(1,"can't create %s\n",dst);
+        return;
+    }
+    else{
+//        printf(1,"can create %s %s\n",dst,src);
+        close(fdc);
+    }
+    if ( (fdw=open(dst,O_WRONLY)) < 0 ){
+        printf(1,"can't write to %s\n",dst);
         return;
     }
     int buff_len;
@@ -88,7 +95,7 @@ traverse_dir(char *path){
         if(st.type == 1){
             if(!recursively){
                 printf(1,"cp: omitting directory '%s'\n",obj_name+1);
-                    continue;
+                continue;
             }
             *new_path='\0';
             ++obj_name;
@@ -115,12 +122,11 @@ traverse_dir(char *path){
         else{
             *new_dst='\0';
             *new_src='\0';
-
             _strcat(new_src,obj_name);
-
             _strcat(new_dst,destination_path);
             _strcat(new_dst,parent_dir);//asd
             _strcat(new_dst,new_src);
+//            printf(1,"cp : copy %s to %s\n",obj_name+1,new_dst);
             copy_file(new_dst,obj_name+1);
         }
     }
@@ -139,13 +145,12 @@ int is_file(char *path){
     if(fstat(fd, &st) < 0){
         return 1;
     }
-
+    close(fd);
     if(st.type==2)return 1;
 
     return 0;
 
 }
-//asdasd
 
 char* getdir_name(char *path){
     int i=strlen(path)-2;// karna bisa jadi case dir1/dir2/ atau dir1/dir2
@@ -156,6 +161,7 @@ char* getdir_name(char *path){
 }
 
 int main(int argc, char **argv){
+    printf(1,"hola\n");
     parent_dir=malloc(128*sizeof(char));
     source_path=malloc(128*sizeof(char));
     destination_path=malloc(128*sizeof(char));
@@ -189,12 +195,10 @@ int main(int argc, char **argv){
             printf(1,"cp: cannot stat '%s': Not a directory\n",source_path);
             exit();
         }
-        else if(is_file(destination_path)){
-            copy_file(destination_path,source_path);
-        }
-        else{
+        else if(!is_file(destination_path)){
             _strcat(destination_path,"/");
             _strcat(destination_path,source_path);
+       //     printf(1,"masuk\n");
         }
         copy_file(destination_path,source_path);
     }
@@ -211,6 +215,8 @@ int main(int argc, char **argv){
                 if(new_path[ strlen(new_path)-1 ]!='/'){_strcat(new_path,"/");}
 
                 for(int i=strlen(destination_path)-1;i>-1 && destination_path[i]!='/';destination_path[i--]='\0');
+
+//                printf(1,"mkdir %s : %d\n",new_path,mkdir(new_path));
                 mkdir(new_path);
                 traverse_dir(source_path);
                 exit();
