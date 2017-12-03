@@ -34,7 +34,7 @@ int base64_encode(unsigned char in[], unsigned char out[], int len, int newline_
       out[idx2+2] = charset[((in[idx+1] & 0x0f) << 2) + (in[idx+2] >> 6)];
       out[idx2+3] = charset[in[idx+2] & 0x3F];
       
-      if (!(idx2 % separator) && newline_flag) {
+      if (!(idx2 % separator+1) && newline_flag) {
          out[idx2+4] = '\n';
          idx2++;
       }
@@ -59,7 +59,7 @@ int base64_encode(unsigned char in[], unsigned char out[], int len, int newline_
 }
 
 
-int base64_decode(unsigned char in[], unsigned char out[], int len)
+int base64_decode(unsigned char in[], unsigned char out[], int len, int newline_flag, int separator)
 {
    unsigned char ch;
    int idx,idx2,blks,left_over;
@@ -74,7 +74,11 @@ int base64_decode(unsigned char in[], unsigned char out[], int len)
       out[idx] = (revchar(in[idx2]) << 2) + ((revchar(in[idx2+1]) & 0x30) >> 4);
       out[idx+1] = (revchar(in[idx2+1]) << 4) + (revchar(in[idx2+2]) >> 2);
       out[idx+2] = (revchar(in[idx2+2]) << 6) + revchar(in[idx2+3]);
-   }
+
+      if (!(idx2 % separator+1) && newline_flag) {
+         out[idx2+4] = '\n';
+         idx2++;
+      }
    left_over = len % 4;
    if (left_over == 2) {
       out[idx] = (revchar(in[idx2]) << 2) + ((revchar(in[idx2+1]) & 0x30) >> 4);
@@ -112,7 +116,7 @@ int main(int argc, char *argv[]){
          data[jum] = buffer;
          jum=jum+1;
       }
-      base64_encode(data, output, jum, 0, 77);
+      base64_encode(data, output, jum, 0, 76);
    }
    else if(argc == 3){
       if (argv[1] == 'D' ){
@@ -123,7 +127,7 @@ int main(int argc, char *argv[]){
             data[jum] = buffer;
             jum=jum+1;
          }
-         base64_encode(data, output, jum, 0, 77);
+         base64_encode(data, output, jum, 0, 76);
       }
       else if (argv[1] == 'E' ){
          int inputfile;
@@ -133,7 +137,7 @@ int main(int argc, char *argv[]){
             data[jum] = buffer;
             jum=jum+1;
          }
-         base64_dencode(data, output, jum);
+         base64_dencode(data, output, jum, 0, 76);
       }
    }
    else if(argc == 4){
@@ -145,7 +149,9 @@ int main(int argc, char *argv[]){
             data[jum] = buffer;
             jum=jum+1;
          }
-         base64_encode(data, output, jum, 0, argv[2]);
+         int linebaru;
+         linebaru = atoi(argv[2]);
+         base64_encode(data, output, jum, 0, linebaru);
       }
    }
    else if(argc == 5){
@@ -157,7 +163,9 @@ int main(int argc, char *argv[]){
             data[jum] = buffer;
             jum=jum+1;
          }
-         base64_encode(data, output, jum, 0, argv[2]);
+         int linebaru;
+         linebaru = atoi(argv[2]);         
+         base64_encode(data, output, jum, 0, linebaru);
       }
       else if (argv[3] == 'D' ){
          int inputfile;
@@ -167,7 +175,9 @@ int main(int argc, char *argv[]){
             data[jum] = buffer;
             jum=jum+1;
          }
-         base64_dencode(data, output, jum);
+         int linebaru;
+         linebaru = atoi(argv[2]);
+         base64_dencode(data, output, jum, 0, linebaru);
       }
    }
 
