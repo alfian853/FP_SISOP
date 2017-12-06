@@ -6,7 +6,7 @@
 
 char *source_path,*destination_path;
 
-vvoid copy_file(char* dst,char *src){
+void copy_file(char* dst,char *src){
     int fdr,fdw,fdc;
 //    printf(1,"gogo\n");
     if ( (fdr=open(src,O_RDONLY)) < 0 ){
