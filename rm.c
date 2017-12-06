@@ -4,15 +4,27 @@
 #include "fcntl.h"
 #include "fs.h"
 
+
+
+char *parent_dir;
+
+void _strcat(char *dst,char *src){
+    int j=strlen(dst);
+    for(int i=0;i<strlen(src);++i,j++){
+        dst[j]=src[i];
+    }
+    dst[j]='\0';
+return;
+}
+
+
 void traverse_dir(char *path){
     if(chdir(path)<0){
         printf(2,"rm: cannot open %s\n",path);
     }
-    char *new_path=malloc(256*sizeof(char));
-    char *new_src=malloc(256*sizeof(char));//[256];
-    char *new_dst=malloc(256*sizeof(char));//[256];
+    char *new_path=malloc(128*sizeof(char));
 
-    char buf[512], *p;
+    char buf[128], *p;
     int fd;
     struct dirent de;
     struct stat st;
@@ -45,21 +57,11 @@ void traverse_dir(char *path){
             continue;
         }
         char *obj_name=buf+1;//karna buf = './namafile'
+      //  printf(1,"read %s\n",obj_name);
         if(!strcmp(obj_name,"/.") || !strcmp(obj_name,"/.."))continue;
-//        printf(1,"reading %s\n",obj_name);
+    //    printf(1,"reading %s\n",obj_name);
         if(st.type == 1){
-
-            *new_path='\0';
             ++obj_name;
-            _strcat(new_path,destination_path);
-            _strcat(new_path,"/");
-            _strcat(new_path,path);
-            _strcat(new_path,"/");
-            _strcat(new_path,obj_name);
-
-            mkdir(new_path);
-
-
             *new_path='\0';
             _strcat(new_path,path);
             _strcat(new_path,obj_name);
@@ -70,19 +72,12 @@ void traverse_dir(char *path){
             _strcat(parent_dir,"/");
             traverse_dir(obj_name);
             unlink(obj_name);
+//            printf(1,"hapus folder %s\n",obj_name);
             strcpy(parent_dir,temp_pdir);
         }
         else{
-            *new_dst='\0';
-            *new_src='\0';
-
-            _strcat(new_src,obj_name);
-
-            _strcat(new_dst,destination_path);
-            _strcat(new_dst,parent_dir);
-            _strcat(new_dst,new_src);
-  //          printf(2,"copy file %s to %s\n",obj_name+1,new_dst);
             unlink(obj_name+1);
+  //          printf(1,"hapus file %s\n",obj_name+1);
         }
     }
     close(fd);
@@ -93,8 +88,9 @@ void traverse_dir(char *path){
 
 int main(int argc, char *argv[]){
     int i;
+    parent_dir = malloc(64*sizeof(char));
     if(!strcmp(argv[1],"-rf") || !strcmp(argv[1],"-fr")){
-    	traverse_dir(argv[2])
+    	traverse_dir(argv[2]);
     }
     else{
     	for(i=1;i<argc;i++){
@@ -104,3 +100,4 @@ int main(int argc, char *argv[]){
 
     return 0;
 }
+
