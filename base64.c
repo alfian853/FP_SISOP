@@ -98,11 +98,11 @@ int base64_decode(unsigned char in[], unsigned char out[], int len, int newline_
 int main(int argc, char *argv[]){
    //USAGE:
    //base64 file -> for eecode data
-   //base64 D file -> for decode data 
-   //base64 E file -> for encode data
-   //base64 W n file -> for encode and add newline every n characters
-   //base64 W n E file -> for encode and add newline every n characters
-   //base64 W n D file -> for dencode and add newline every n characters
+   //base64 -d file -> for decode data 
+   //base64 -e file -> for encode data
+   //base64 -w n file -> for encode and add newline every n characters
+   //base64 -we n file -> for encode and add newline every n characters
+   //base64 -wd n file -> for dencode and add newline every n characters
    if(argc==2){
       int inputfile;
       if((inputfile = open(argv[1],O_RDONLY)) < 0){
@@ -165,7 +165,6 @@ int main(int argc, char *argv[]){
          exit();
       }
       else if((strcmp(argv[1],"-we"))==0){
-         printf(1,"masuk sini gan\n");
          int inputfile;
          if((inputfile = open(argv[3],O_RDONLY)) < 0){
             close(inputfile);
