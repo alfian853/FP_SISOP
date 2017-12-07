@@ -6,7 +6,7 @@
 
 //function from http://bradconte.com/base64_c
 
-unsigned char charset[64]={"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"};
+unsigned char charset[]={"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"};
 
 unsigned char revchar(char ch)
 {
