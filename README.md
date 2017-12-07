@@ -1,9 +1,6 @@
 TO DO:
 
 * [x] touch
-* [ ] rm:
-  * [x] rm
-  * [ ] rm -rf
 * [x] cp:
   * [x] cp
   * [x] cp \*
