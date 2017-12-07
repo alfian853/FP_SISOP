@@ -148,25 +148,9 @@ int main(int argc, char *argv[]){
       }
    }
    else if(argc==4){
-      int inputfile;
-      if((inputfile = open(argv[3],O_RDONLY)) < 0){
-         close(inputfile);
-         exit();
-      }
-      int buff_len;
-      unsigned char output[1024],data[1024];
-      while ((buff_len = read(inputfile,data,sizeof(data))) > 0);
-      int linebaru;
-      linebaru = atoi(argv[2]);
-      base64_encode(data, output, strlen((char*)data),1,linebaru);
-      printf(1,"%s\n",output);
-      close(inputfile);
-      exit();
-   }
-   else if(argc==5){
-      if((strcmp(argv[3],"-d"))==0){
+      if((strcmp(argv[1],"-wd"))==0){
          int inputfile;
-         if((inputfile = open(argv[4],O_RDONLY)) < 0){
+         if((inputfile = open(argv[3],O_RDONLY)) < 0){
             close(inputfile);
             exit();
          }
@@ -180,10 +164,10 @@ int main(int argc, char *argv[]){
          close(inputfile);
          exit();
       }
-      else if((strcmp(argv[3],"-e"))==0){
+      else if((strcmp(argv[1],"-we"))==0){
          printf(1,"masuk sini gan\n");
          int inputfile;
-         if((inputfile = open(argv[4],O_RDONLY)) < 0){
+         if((inputfile = open(argv[3],O_RDONLY)) < 0){
             close(inputfile);
             exit();
          }
@@ -196,6 +180,22 @@ int main(int argc, char *argv[]){
          printf(1,"%s\n",output);
          close(inputfile);
          exit();  
+      }
+      else{
+         int inputfile;
+         if((inputfile = open(argv[3],O_RDONLY)) < 0){
+            close(inputfile);
+            exit();
+         }
+         int buff_len;
+         unsigned char output[1024],data[1024];
+         while ((buff_len = read(inputfile,data,sizeof(data))) > 0);
+         int linebaru;
+         linebaru = atoi(argv[2]);
+         base64_encode(data, output, strlen((char*)data),1,linebaru);
+         printf(1,"%s\n",output);
+         close(inputfile);
+         exit();
       }
    }
 }
