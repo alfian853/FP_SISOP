@@ -34,7 +34,7 @@ int base64_encode(unsigned char in[], unsigned char out[], int len, int newline_
       out[idx2+2] = charset[((in[idx+1] & 0x0f) << 2) + (in[idx+2] >> 6)];
       out[idx2+3] = charset[in[idx+2] & 0x3F];
       
-      if (!(idx2 % separator+1) && newline_flag) {
+      if (!(idx2 % (separator+1)) && newline_flag) {
          out[idx2+4] = '\n';
          idx2++;
       }
@@ -74,7 +74,7 @@ int base64_decode(unsigned char in[], unsigned char out[], int len, int newline_
       out[idx+1] = (revchar(in[idx2+1]) << 4) + (revchar(in[idx2+2]) >> 2);
       out[idx+2] = (revchar(in[idx2+2]) << 6) + revchar(in[idx2+3]);
 
-      if (!(idx2 % separator+1) && newline_flag) {
+      if (!(idx2 % (separator+1)) && newline_flag) {
          out[idx2+4] = '\n';
          idx2++;
       }
@@ -96,73 +96,106 @@ int base64_decode(unsigned char in[], unsigned char out[], int len, int newline_
 }
 
 int main(int argc, char *argv[]){
-   unsigned char data[1024]="", output[1024]="";
-   int inputfile=0;
-   if (argc == 1){
-      printf(1, "USAGE:\n");
-      printf(1, "./base64 file -> for eecode data\n"); 
-      printf(1, "./base64 D file -> for decode data\n"); 
-      printf(1, "./base64 E file -> for encode data\n"); 
-      printf(1, "./base64 W n file -> for encode and add newline every n characters\n"); 
-      printf(1, "./base64 W n E file -> for encode and add newline every n characters\n");
-      printf(1, "./base64 W n D file -> for dencode and add newline every n characters\n");
-
-   }
-   else if(argc == 2){
+   //USAGE:
+   //base64 file -> for eecode data
+   //base64 D file -> for decode data 
+   //base64 E file -> for encode data
+   //base64 W n file -> for encode and add newline every n characters
+   //base64 W n E file -> for encode and add newline every n characters
+   //base64 W n D file -> for dencode and add newline every n characters
+   if(argc==2){
+      int inputfile;
+      if((inputfile = open(argv[1],O_RDONLY)) < 0){
+         close(inputfile);
+         exit();
+      }
       int buff_len;
-      inputfile = open(argv[1], O_RDONLY);
-      while( ( buff_len=read(inputfile,data,sizeof(data) ))> 0  );
-      base64_encode(data, output, strlen((char*)data), 0, 76);
-      printf(1, "%s\n", output);
+      unsigned char output[1024],data[1024];
+      while ((buff_len = read(inputfile,data,sizeof(data))) > 0);
+      base64_encode(data, output, strlen((char*)data),0,76);
+      printf(1,"%s\n",output);
+      close(inputfile);
+      exit();
    }
-   else if(argc == 3){
-      if(!strcmp(argv[1],"D")){
+   else if(argc==3){
+      if((strcmp(argv[1],"-d"))==0){
+         int inputfile;
+         if((inputfile = open(argv[2],O_RDONLY)) < 0){
+            close(inputfile);
+            exit();
+         }
          int buff_len;
-         inputfile = open(argv[1], O_RDONLY);
-         while( ( buff_len=read(inputfile,data,sizeof(data) ))> 0  );
-         base64_encode(data, output, strlen((char*)data), 0, 76);
-         printf(1, "%s\n", output);
+         unsigned char output[1024],data[1024];
+         while ((buff_len = read(inputfile,data,sizeof(data))) > 0);
+         base64_decode(data, output, strlen((char*)data),0,76);
+         printf(1,"%s\n",output);
+         close(inputfile);
+         exit();
       }
-      else if(!strcmp(argv[1],"E")){
+      else if((strcmp(argv[1],"-e"))==0){
+         int inputfile;
+         if((inputfile = open(argv[2],O_RDONLY)) < 0){
+            close(inputfile);
+            exit();
+         }
          int buff_len;
-         inputfile = open(argv[1], O_RDONLY);
-         while( ( buff_len=read(inputfile,data,sizeof(data) ))> 0  );
-         base64_decode(data, output, strlen((char*)data), 0, 76);
-         printf(1, "%s\n", output);
+         unsigned char output[1024],data[1024];
+         while ((buff_len = read(inputfile,data,sizeof(data))) > 0);
+         base64_encode(data, output, strlen((char*)data),0,76);
+         printf(1,"%s\n",output);
+         close(inputfile);
+         exit();  
       }
    }
-   else if(argc == 4){
-      if(!strcmp(argv[1],"W")){
+   else if(argc==4){
+      int inputfile;
+      if((inputfile = open(argv[3],O_RDONLY)) < 0){
+         close(inputfile);
+         exit();
+      }
+      int buff_len;
+      unsigned char output[1024],data[1024];
+      while ((buff_len = read(inputfile,data,sizeof(data))) > 0);
+      int linebaru;
+      linebaru = atoi(argv[2]);
+      base64_encode(data, output, strlen((char*)data),1,linebaru);
+      printf(1,"%s\n",output);
+      close(inputfile);
+      exit();
+   }
+   else if(argc==5){
+      if((strcmp(argv[3],"-d"))==0){
+         int inputfile;
+         if((inputfile = open(argv[4],O_RDONLY)) < 0){
+            close(inputfile);
+            exit();
+         }
          int buff_len;
-         inputfile = open(argv[1], O_RDONLY);
-         while( ( buff_len=read(inputfile,data,sizeof(data) ))> 0  );
+         unsigned char output[1024],data[1024];
+         while ((buff_len = read(inputfile,data,sizeof(data))) > 0);
          int linebaru;
          linebaru = atoi(argv[2]);
-         base64_encode(data, output, strlen((char*)data), 0, linebaru);
-         printf(1, "%s\n", output);
+         base64_decode(data, output, strlen((char*)data),1,linebaru);
+         printf(1,"%s\n",output);
+         close(inputfile);
+         exit();
       }
-   }
-   else if(argc == 5){
-       if(!strcmp(argv[3],"E")){
+      else if((strcmp(argv[3],"-e"))==0){
+         printf(1,"masuk sini gan\n");
+         int inputfile;
+         if((inputfile = open(argv[4],O_RDONLY)) < 0){
+            close(inputfile);
+            exit();
+         }
          int buff_len;
-         inputfile = open(argv[1], O_RDONLY);
-         while( ( buff_len=read(inputfile,data,sizeof(data) ))> 0  );
-         int linebaru;
-         linebaru = atoi(argv[2]);         
-         base64_encode(data, output, strlen((char*)data), 0, linebaru);
-         printf(1, "%s\n", output);
-      }
-      else if(!strcmp(argv[3],"D")){
-         int buff_len;
-         inputfile = open(argv[1], O_RDONLY);
-         while( ( buff_len=read(inputfile,data,sizeof(data) ))> 0  );
+         unsigned char output[1024],data[1024];
+         while ((buff_len = read(inputfile,data,sizeof(data))) > 0);
          int linebaru;
          linebaru = atoi(argv[2]);
-         base64_decode(data, output, strlen((char*)data), 0, linebaru);
-         printf(1, "%s\n", output);
+         base64_encode(data, output, strlen((char*)data),1,linebaru);
+         printf(1,"%s\n",output);
+         close(inputfile);
+         exit();  
       }
    }
-
-   close(inputfile);
-   return 0;
 }
