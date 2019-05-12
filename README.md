@@ -10,9 +10,9 @@ TO DO:
   * [x] mv \*
 * [x] ls
 * [x] cd
-* [ ] rm:
+* [x] rm:
   * [x] rm
-  * [ ] rm -rf
+  * [x] rm -rf
 
 * [x] Tambahan:
   * [x] sleep
